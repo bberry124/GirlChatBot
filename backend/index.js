@@ -10,7 +10,7 @@ app.use(cors());
 
 mongoose
   .connect(
-    "mongodb+srv://minhnguyennhat611003:Minh12345678@cluster0.8q7w4du.mongodb.net/"
+    "mongodb://127.0.0.1:27017/bryce"
   )
   .then((r) => {
     console.log("Connect success");
