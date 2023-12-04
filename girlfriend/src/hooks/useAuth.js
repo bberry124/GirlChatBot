@@ -15,7 +15,7 @@ const useAuth = () => {
     }
   }, []);
 
-  return { isLoggedIn, user };
+  return { isLoggedIn, user, setUser };
 };
 
 export default useAuth;

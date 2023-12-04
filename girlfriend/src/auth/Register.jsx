@@ -88,6 +88,7 @@ export default function Register() {
             xs={8}
             sx={{
               mx: "auto",
+              marginTop: 2,
               "@media (max-width: 768px)": {
                 display: "none",
               },

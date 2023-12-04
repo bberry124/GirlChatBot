@@ -38,16 +38,16 @@ export default function Subscription() {
       });
   };
 
-  useEffect(() => {
-    const getAllCost = async () => {
-      const allData = (await axios.get("http://localhost:3001/cost")).data;
-      setDataCost(allData.data);
-    };
-    getAllCost();
-  }, []);
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace={true} />;
-  }
+  // useEffect(() => {
+  //   const getAllCost = async () => {
+  //     const allData = (await axios.get("http://localhost:3001/cost")).data;
+  //     setDataCost(allData.data);
+  //   };
+  //   getAllCost();
+  // }, []);
+  // if (!isLoggedIn) {
+  //   return <Navigate to="/login" replace={true} />;
+  // }
   return (
     <>
       <img
@@ -94,7 +94,7 @@ export default function Subscription() {
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           sx={{ mx: "auto" }}
         >
-          {data?.map((item, key) => (
+          {dataTest?.map((item, key) => (
             <Grid
               key={key}
               item

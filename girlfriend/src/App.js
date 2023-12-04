@@ -12,7 +12,7 @@ import Home from "./components/Home";
 import Footer from "./components/Footer";
 import Subscription from "./pages/Subscription";
 import CreateCost from "./pages/CreateCost";
-
+import PrivateLayout from "./layouts/PrivateLayout";
 function App() {
   const [mode, setMode] = React.useState("dark");
   const theme = createTheme(mytheme(mode));
@@ -25,33 +25,35 @@ function App() {
             color: "text.primary",
             fontFamily: "Roboto",
           }}
-          // minHeight="100vh"
-          // display="flex"
-          // flexDirection="column"
+          minHeight="100vh"
         >
           <Header />
-          <Box
-          // flexGrow={1}
-          // display="flex"
-          // alignItems="center"
-          // justifyContent="center"
-          >
+          <Box>
             <Container>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/subscription" element={<Subscription />} />
+                <Route
+                  path="/subscription"
+                  element={
+                    <PrivateLayout>
+                      <Subscription />
+                    </PrivateLayout>
+                  }
+                />
                 <Route path="/login" element={<Login />} />
-                <Route path="/create-cost" element={<CreateCost />} />
-
+                <Route
+                  path="/create-cost"
+                  element={
+                    <PrivateLayout>
+                      <CreateCost />
+                    </PrivateLayout>
+                  }
+                />
               </Routes>
-              {/* <Home /> */}
-              {/* <Login /> */}
-              {/* <Footer /> */}
             </Container>
           </Box>
-
         </Box>
       </Router>
     </ThemeProvider>
