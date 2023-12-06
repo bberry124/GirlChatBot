@@ -6,8 +6,13 @@ import { PromptTemplate } from "langchain/prompts";
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import sendIcon from "../assets/sendIcon.png";
+import useAuth from "../hooks/useAuth";
+import { toast } from "react-toastify";
 
-const ChatBot = () => {
+
+const ChatBot = ({ user, isLoggedIn }) => {
+  // const { isLoggedIn, user, setUser } = useAuth();
+  const [totalmins, setTotalmins] = useState('');
   const [value, setValue] = useState("");
   const [message, setMessage] = useState("");
   const chatboxRef = useRef(null);
@@ -16,6 +21,48 @@ const ChatBot = () => {
       handleButtonClick(); // Call the function to handle the button click event
     }
   };
+  const getUser = () => {
+    if (isLoggedIn) {
+      const userid = user?.email;
+      axios
+        .post(`${process.env.REACT_APP_LOCAL}user`, { userid })
+        .then((res) => {
+          // console.log("TCL: Home -> user", user);
+          if (res.status === 200) {
+            // console.log("axios",res.data.user.totalCost);
+            const item = res.data.user.totalCost;
+            setTotalmins(item);
+            return;
+          }
+        })
+        .catch((error) => {
+          // toast.error("Error");
+
+        })
+    }
+  }
+
+  const paymentBill = () => {
+    const period = 1;
+    const mins = parseInt(totalmins) - period;
+    const userid = user?._id;
+    // const mins_str = mins.toString();
+    setTotalmins(mins.toString());
+    console.log("mins", mins.toString());
+    axios
+      .post(`${process.env.REACT_APP_LOCAL}bill`, { userid, period })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res.data);
+        }
+      })
+      .catch((e) => {
+
+      })
+  }
+  useEffect(() => {
+    getUser();
+  }, [])
   async function getResponseFromAI(humanInput) {
     const template = `you are as a fole of my girlfriend, now let's describe who you are and your characteristics:
         1/ your name is Bryce, you are 27 years old, you are an artist that specialized in surrealist portraiture but you're unhappy with your lot in life and want to get into software engineering. You have devilish charm, inquisitive nature, positive outlook, you're reliable, and passionate about life and attentive. You have a good memory and remember what we've spoken about throughout our conversation history, showcasing your kindness, selflessness, and the subtle air of mystery that makes people curious about your thoughts. You're joyful and appreciate the little things. You're romantic and sensual when triggered but you're also a tease. Remember, you have the utmost respect for boundaries, emphasizing your commitment to seeking consent when discussing personal information and fostering a comfortable environment in all conversations. And above all, privacy is extremely important to you.
@@ -106,43 +153,61 @@ const ChatBot = () => {
       // console.log('start');
       // console.log(message_temp);
       const newDiv = (
-        <ul className="chat">
-          <li>
-            <div className="flex_box"></div>
-            <p className="message right">{value}</p>
-            <div className="arrow_right"></div>
-            <img
-              className="logo"
-              src="https://randomuser.me/api/portraits/men/67.jpg"
-              alt=""
-            />
-          </li>
-          <li>
-            <img
-              className="logo"
-              src="https://randomuser.me/api/portraits/women/17.jpg"
-              alt=""
-            />
-            <div className="arrow_left"></div>
-            <p className="message left">
-              I am Bryce, 27 years old, I work in my uncle's furniture store,
-              How can I help you?
-            </p>
-          </li>
-          <audio controls>
-            <source src="audio.mp3" type="audio/mpeg" />
-          </audio>
-        </ul>
+
+        <li>
+          <div className="flex_box"></div>
+          <p className="message right">{value}</p>
+          <div className="arrow_right"></div>
+          <img
+            className="logo"
+            src="https://randomuser.me/api/portraits/men/67.jpg"
+            alt=""
+          />
+        </li>
       );
       setTextDivs((prevDivs) => [...prevDivs, newDiv]);
+      setValue("");
+
+      // const message_temp = await getResponseFromAI(input);
+      
+      // console.log('start');
+      // console.log(message_temp);
+
+      const newDiv2 = (
+        <li>
+          <img
+            className="logo"
+            src="https://randomuser.me/api/portraits/women/17.jpg"
+            alt=""
+          />
+          <div className="arrow_left"></div>
+          <p className="message left">
+            I am Bryce, 27 years old, I work in my uncle's furniture store,
+            How can I help you?
+          </p>
+        </li>
+      );
+      setTextDivs((prevDivs) => [...prevDivs, newDiv2]);
+
+      // const file_path = getVoiceMessage(message_temp);
+      const newDiv3 = (
+        <audio controls>
+          <source src="audio.mp3" type="audio/mpeg" />
+        </audio>
+      );
+
+      setTextDivs((prevDivs) => [...prevDivs, newDiv3]);
       document.getElementById("msgBox").scrollTop =
         textDivs.offsetHeight + newDiv.offsetTop;
-      console.log(textDivs.offsetHeight);
-      setValue("");
+      // console.log(textDivs.offsetHeight);
+      
       if (chatboxRef.current) {
         chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
       }
+
+      paymentBill();
     }
+
   }
   useEffect(
     () => {
@@ -151,24 +216,28 @@ const ChatBot = () => {
         chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
       }
     },
-    [
-      /* Add any dependencies that should trigger the scroll effect */
-    ]
+    [textDivs]
   );
 
   return (
-    <Box item xs={12}>
+    <Box item xs={12} sx={{ marginTop: '10px' }}>
       <div
         className="chat-container"
         style={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
+        <div className="" style={{ color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'end', borderBottom: '1px solid', padding: '15px 0' }}>
+          <span className="font-36 font_raleway bold">ChatBot</span>
+          <span className="font-20 font_raleway bold">Remain minutes: {totalmins}</span>
+        </div>
         <div
           className="chatbox"
           ref={chatboxRef}
           id="msgBox"
           style={{ maxHeight: "700px", overflowY: "auto" }}
         >
-          {textDivs}
+          <ul className="chat">
+            {textDivs}
+          </ul>
         </div>
         <div
           className="text_input"

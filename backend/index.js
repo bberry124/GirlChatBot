@@ -3,7 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const FormDataModel = require("./models/FormData");
 const CostModel = require("./models/Cost");
-
+const multer = require('multer');
+const upload = multer();
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -85,7 +86,33 @@ app.post("/login", (req, res) => {
       return res.status(500).json("Internal server error");
     });
 });
+app.post("/user", async (req, res)=> {
+  const userid = req.body;
+  console.log(userid);
+  const user = await FormDataModel.findOne(userid);
+  if(user){
+    return res.status(200).json({message: 'Okay', status: 200, user});
+  }else {
+    res.status(404).json("No User");
+  }
+})
+app.post("/bill",async (req, res) => {
+  const {userid, period} = req.body;
+  const user = await FormDataModel.findById(userid);
+  const newTotalCost = Number(user.totalCost) - period;
+  const result = await FormDataModel.updateOne(
+    {_id: userid},
+    { $set: { totalCost: newTotalCost }}
+  )
+  console.log("payload", newTotalCost)
+  if(user){
+    return res
+  .status(200)
+  .json({user, message: "Payment Success"})
+  }
+ 
+})
 
-app.listen(3001, () => {
-  console.log("Server listining on http://127.0.0.1:3001");
+app.listen(4000, () => {
+  console.log("Server listining on http://127.0.0.1:4000");
 });

@@ -5,6 +5,7 @@ import {
   Typography,
   ThemeProvider,
   createTheme,
+  Dialog,
 } from "@mui/material";
 import JoinForm from "./JoinForm";
 import ChatBot from "./ChatBot";
@@ -14,6 +15,7 @@ import Footer from "../components/Footer";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 const Home = () => {
   const navigate = useNavigate();
   const { isLoggedIn, user, setUser } = useAuth();
@@ -24,6 +26,8 @@ const Home = () => {
     },
   });
 
+  // const totalmins = user?.totalCost;
+
   const handleNavigate = () => {
     if (user?._id) {
       localStorage.removeItem("user");
@@ -33,6 +37,7 @@ const Home = () => {
     }
     navigate("/login");
   };
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -125,8 +130,8 @@ const Home = () => {
             />
           </Grid>
         </Grid>
-        <JoinForm />
-        <ChatBot />
+        {/* <JoinForm /> */}
+        <ChatBot user={user} isLoggedIn={isLoggedIn}/>
         <Footer />
       </Box>
     </ThemeProvider>

@@ -10,7 +10,7 @@ const JoinForm = () => {
       </div>
       <div className="join-bryce-text">
         <h2>
-          Caryn AI is at capacity, but we're accepting users on a rolling basis.
+          Bryce AI is at capacity, but we're accepting users on a rolling basis.
           Join our Waitlist!
         </h2>
       </div>
